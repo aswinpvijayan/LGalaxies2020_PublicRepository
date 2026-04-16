@@ -73,11 +73,23 @@ t_acc, ,
 f_cmax, unitless , max fraction of molecular media //ROB: I think this is actually the maximum mass fraction of element ee in clouds that is in dust.
 ColdGasDiff_elements, Msun , Mass of elements in the diffused phase (in ColdGas)
 ColdGasClouds_elements, Msun , Mass of elements in the cloud phase (in ColdGas)
-DustColdGasDiff_elements, Msun , Mass of elements in the diffuse phase locked up in dust (in ColdGas)
-DustColdGasClouds_elements, Msun , Mass of elements in the cloud phase locked up in dust (in ColdGas)
-DustHotGas_elements, Msun , Mass of elements locked up in dust (in HotGas)
-DustEjectedMass_elements, Msun , Mass of elements locked up in dust (in EjectedMass)
+DustMassColdGasDiff, ,
+DustMassColdGasClouds, ,
+DustNumColdGasDiff, ,
+DustNumColdGasClouds, ,
+DustAreaColdGasDiff, ,
+DustAreaColdGasClouds, ,
+DustMassHotGas, ,
+DustNumHotGas, ,
+DustAreaHotGas, ,
+DustMassEjectedMass, ,
+DustNumEjectedMass, ,
+DustAreaEjectedMass, ,
 ColdGasDiffRings_elements, Msun , Mass of elements in diffuse gas in each annular ring
 ColdGasCloudsRings_elements, Msun , Mass of elements in clouds in each annular ring
-DustColdGasDiffRings_elements, Msun , Mass of elements in diffuse gas locked up in dust in each annular ring
-DustColdGasCloudsRings_elements, Msun , Mass of elements in diffuse gas locked up in dust in each annular ring
+DustMassColdGasDiffRings, ,
+DustMassColdGasCloudsRings, ,
+DustNumColdGasDiffRings, ,
+DustNumColdGasCloudsRings, ,
+DustAreaColdGasDiffRings, ,
+DustAreaColdGasCloudsRings, ,

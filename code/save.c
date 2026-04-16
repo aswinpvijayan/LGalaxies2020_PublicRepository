@@ -153,7 +153,7 @@ void prepare_galaxy_for_output(int n, struct GALAXY *g, struct GALAXY_OUTPUT *o,
 void prepare_galaxy_for_output(int n, struct GALAXY *g, struct GALAXY_OUTPUT *o)
 #endif
 {
-  int j, ll;
+  int j, ll, ss, bb;
 #ifndef GALAXYTREE
 #ifdef OUTPUT_ELEMENTS
   int kk;
@@ -657,8 +657,19 @@ void prepare_galaxy_for_output(int n, struct GALAXY *g, struct GALAXY_OUTPUT *o)
 #endif
 	  o->ColdGasDiff_elements[kk] = g->ColdGasDiff_elements[kk];
 	  o->ColdGasClouds_elements[kk] = g->ColdGasClouds_elements[kk];
-	  o->DustColdGasDiff_elements[kk] = g->DustColdGasDiff_elements[kk];
-	  o->DustColdGasClouds_elements[kk] = g->DustColdGasClouds_elements[kk];
+  }
+	  // o->DustColdGasDiff_elements[kk] = g->DustColdGasDiff_elements[kk];
+	  // o->DustColdGasClouds_elements[kk] = g->DustColdGasClouds_elements[kk];
+  for(ss=0; ss<NUM_DUST_SPECIES; ss++){
+    for(bb=0; bb<NUM_SIZE_BINS; bb++) {
+      o->DustMassColdGasDiff[ss][bb] = g->DustMassColdGasDiff[ss][bb];
+      o->DustAreaColdGasDiff[ss][bb] = g->DustAreaColdGasDiff[ss][bb];
+      o->DustNumColdGasDiff[ss][bb] = g->DustNumColdGasDiff[ss][bb];
+      o->DustMassColdGasClouds[ss][bb] = g->DustMassColdGasClouds[ss][bb];
+      o->DustAreaColdGasClouds[ss][bb] = g->DustAreaColdGasClouds[ss][bb];
+      o->DustNumColdGasClouds[ss][bb] = g->DustNumColdGasClouds[ss][bb];
+    }
+  }
 #ifdef DUST_HOTGAS
 	  o->DustHotGas_elements[kk] = g->DustHotGas_elements[kk];
 #endif //DUST_HOTGAS
@@ -669,11 +680,11 @@ void prepare_galaxy_for_output(int n, struct GALAXY *g, struct GALAXY_OUTPUT *o)
       for(ll=0; ll<RNUM; ll++) {
     	  o->ColdGasDiffRings_elements[ll][kk] = g->ColdGasDiffRings_elements[ll][kk];
     	  o->ColdGasCloudsRings_elements[ll][kk] = g->ColdGasCloudsRings_elements[ll][kk];
-    	  o->DustColdGasDiffRings_elements[ll][kk] = g->DustColdGasDiffRings_elements[ll][kk];
-    	  o->DustColdGasCloudsRings_elements[ll][kk] = g->DustColdGasCloudsRings_elements[ll][kk];
+    	  // o->DustColdGasDiffRings_elements[ll][kk] = g->DustColdGasDiffRings_elements[ll][kk];
+    	  // o->DustColdGasCloudsRings_elements[ll][kk] = g->DustColdGasCloudsRings_elements[ll][kk];
       }
 #endif //OUTPUT_DUST_RINGS
-  }
+  // }
 #endif //DETAILED_DUST
 #endif //OUTPUT_ELEMENTS
 
