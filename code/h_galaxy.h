@@ -295,29 +295,55 @@ struct GALAXY			/* Galaxy data */
   float t_acc; // ? // dust growth rate
 #endif //TAU_RINGS
 #ifdef H2_AND_RINGS
-  float f_i[RNUM][NUM_ELEMENTS]; // ? // fraction of dust in diffused media
-  float f_c[RNUM][NUM_ELEMENTS]; // ? // fraction of dust in molecular media
-  float f_cmax[RNUM][NUM_ELEMENTS]; // ? // max fraction of molecular media
+  float f_i[RNUM][NUM_DUST_SPECIES]; // ? // fraction of dust in diffused media
+  float f_c[RNUM][NUM_DUST_SPECIES]; // ? // fraction of dust in molecular media
+  float f_cmax[RNUM][NUM_DUST_SPECIES]; // ? // max fraction of molecular media
 #else
-  float f_i[NUM_ELEMENTS]; // ? // fraction of dust in diffused media
-  float f_c[NUM_ELEMENTS]; // ? // fraction of dust in molecular media
-  float f_cmax[NUM_ELEMENTS]; // ? // max fraction of molecular media
+  float f_i[[NUM_DUST_SPECIES]]; // ? // fraction of dust in diffused media
+  float f_c[[NUM_DUST_SPECIES]]; // ? // fraction of dust in molecular media
+  float f_cmax[[NUM_DUST_SPECIES]]; // ? // max fraction of molecular media
 #endif //H2_AND_RINGS
   double ColdGasDiff_elements[NUM_ELEMENTS];
   double ColdGasClouds_elements[NUM_ELEMENTS];
-  double DustColdGasDiff_elements[NUM_ELEMENTS]; // Msun // Mass of elements in the diffused phase locked up in dust (in ColdGas)
-  double DustColdGasClouds_elements[NUM_ELEMENTS]; // Msun // Mass of elements in the clouds locked up in dust (in ColdGas)
+  
+  // Dust Mass Arrays (M3)
+  double DustMassColdGasDiff[NUM_DUST_SPECIES][NUM_SIZE_BINS];
+  double DustMassColdGasClouds[NUM_DUST_SPECIES][NUM_SIZE_BINS];
+
+  // Dust Number Arrays (M0)
+  double DustNumColdGasDiff[NUM_DUST_SPECIES][NUM_SIZE_BINS];
+  double DustNumColdGasClouds[NUM_DUST_SPECIES][NUM_SIZE_BINS];
+
+  // Dust Area Arrays (M2)
+  double DustAreaColdGasDiff[NUM_DUST_SPECIES][NUM_SIZE_BINS];
+  double DustAreaColdGasClouds[NUM_DUST_SPECIES][NUM_SIZE_BINS];
 #ifdef DUST_HOTGAS
-  double DustHotGas_elements[NUM_ELEMENTS]; // Msun // Mass of elements locked up in dust (in HotGas)
+  // Msun // Mass of dust species locked up in HotGas
+  double DustMassHotGas[NUM_DUST_SPECIES][NUM_SIZE_BINS];
+  double DustNumHotGas[NUM_DUST_SPECIES][NUM_SIZE_BINS];
+  double DustAreaHotGas[NUM_DUST_SPECIES][NUM_SIZE_BINS]; 
 #endif //DUST_HOTGAS
 #ifdef DUST_EJECTEDMASS
-  float DustEjectedMass_elements[NUM_ELEMENTS]; // Msun // Mass of elements locked up in dust (in EjectedMass)
+  // Msun // Mass of dust species in EjectedMass
+  double DustMassEjected[NUM_DUST_SPECIES][NUM_SIZE_BINS]; 
+  double DustNumEjected[NUM_DUST_SPECIES][NUM_SIZE_BINS];
+  double DustAreaEjected[NUM_DUST_SPECIES][NUM_SIZE_BINS];
 #endif //DUST_EJECTEDMASS
 #ifdef H2_AND_RINGS
   double ColdGasDiffRings_elements[RNUM][NUM_ELEMENTS];
   double ColdGasCloudsRings_elements[RNUM][NUM_ELEMENTS];
-  double DustColdGasDiffRings_elements[RNUM][NUM_ELEMENTS];
-  double DustColdGasCloudsRings_elements[RNUM][NUM_ELEMENTS];
+  
+  // Mass Arrays with Rings
+  double DustMassColdGasDiffRings[RNUM][NUM_DUST_SPECIES][NUM_SIZE_BINS];
+  double DustMassColdGasCloudsRings[RNUM][NUM_DUST_SPECIES][NUM_SIZE_BINS];
+
+  // Number Arrays with Rings
+  double DustNumColdGasDiffRings[RNUM][NUM_DUST_SPECIES][NUM_SIZE_BINS];
+  double DustNumColdGasCloudsRings[RNUM][NUM_DUST_SPECIES][NUM_SIZE_BINS];
+
+  // Area Arrays with Rings
+  double DustAreaColdGasDiffRings[RNUM][NUM_DUST_SPECIES][NUM_SIZE_BINS];
+  double DustAreaColdGasCloudsRings[RNUM][NUM_DUST_SPECIES][NUM_SIZE_BINS];
 #endif //H2_AND_RINGS
 #endif //DETAILED_DUST
 } *Gal, *HaloGal;

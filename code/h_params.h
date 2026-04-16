@@ -121,6 +121,20 @@
 #define eta_SNII_Cb  0.15
 #define eta_SNIa_Fe  0.005
 
+//Define dust species and dust size distribution parameters: 15-April-2026
+// Size Bin Definitions
+#define NUM_SIZE_BINS 3
+#define VSG_BIN 0  // Very Small Grains (0.0001 - 0.01 um)
+#define SG_BIN  1  // Small Grains (0.01 - 0.1 um)
+#define LG_BIN  2  // Large Grains (> 0.1 um)
+
+// Dust Species Definitions
+#define NUM_DUST_SPECIES 4
+#define DUST_SILICATES 0
+#define DUST_CARBON    1
+#define DUST_IRON      2
+#define DUST_SIC       3
+
 //Defining the mass fractions of each dust type that is made up of each element (for use in model_dust_yields.c):
 //Note: ROB: Given that the atomic weights above are only to 3 d.c.s, shouldn't we truncate these dust-type fractions to 3 d.c.s too?
 //Forsterite (Mg2SiO4):
