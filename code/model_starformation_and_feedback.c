@@ -506,7 +506,8 @@ void update_from_star_formation(int p, double stars, double starsRings[], char t
     for(jj=0;jj<NUM_DUST_SPECIES;jj++){
       for(int kk=0;kk<NUM_SIZE_BINS;kk++){
         Gal[p].DustColdGasRates[4] += (Gal[p].DustMassColdGasDiffRings[ee][jj][kk]*fractionDiffRings[jj] + Gal[p].DustMassColdGasCloudsRings[ee][jj][kk]*fractionCloudsRings[jj])/(deltaT * UnitTime_in_years);
-    }    
+      }    
+    }
   }
 #else //DETAILED_DUST
   transfer_material_with_rings(p,"DiskMass",p,"ColdGas",fractionRings,"model_starformation_and_feedback.c", __LINE__);
