@@ -31,21 +31,31 @@
 
 double get_initial_disk_radius(int halonr, int p)
 {
-  double SpinParameter, dgas, Vmax;
+  double spin_parameter;
+  double dgas;
+  double vmax;
 
   if(DiskRadiusModel == 0 || DiskRadiusModel == 1)
     {
       if (Gal[p].Type == 0)
-	Vmax=Gal[p].Vmax;
+      {
+        vmax = Gal[p].Vmax;
+      }
       else
-	Vmax=Gal[p].InfallVmax;
+      {
+        vmax = Gal[p].InfallVmax;
+      }
 
       if(Halo[halonr].Spin[0]==0 && Halo[halonr].Spin[1]==0 && Halo[halonr].Spin[2]==0)
-    	dgas = Gal[p].Rvir / 10.0;
+      {
+      dgas = Gal[p].Rvir / 10.0;
+      }
       else
-    	dgas = 3.0 * sqrt(Halo[halonr].Spin[0] * Halo[halonr].Spin[0] +
-			  Halo[halonr].Spin[1] * Halo[halonr].Spin[1] +
-			  Halo[halonr].Spin[2] * Halo[halonr].Spin[2] ) / 2.0 / Vmax;
+      {
+      dgas = 3.0 * sqrt((Halo[halonr].Spin[0] * Halo[halonr].Spin[0]) +
+        (Halo[halonr].Spin[1] * Halo[halonr].Spin[1]) +
+        (Halo[halonr].Spin[2] * Halo[halonr].Spin[2])) / 2.0 / vmax;
+      }
 
       return dgas;
 
@@ -105,8 +115,8 @@ double get_gas_disk_radius(int p)
     {
       Radius=0.5*RingRadius[0]*Gal[p].ColdGasRings[0];
       for(jj=1;jj<RNUM;jj++)
-	Radius+=(0.5*(RingRadius[jj-1]+RingRadius[jj])*Gal[p].ColdGasRings[jj]);
-      Radius=3.0*Radius/Gal[p].ColdGas/2.0;      //2.0=mean radius/scale length for exponential disk
+	      Radius+=(0.5*(RingRadius[jj-1]+RingRadius[jj])*Gal[p].ColdGasRings[jj]);
+        Radius=3.0*Radius/Gal[p].ColdGas/2.0;      //2.0=mean radius/scale length for exponential disk
     }
   //else
   //  Radius = Gal[p].Rvir / 10.0;
@@ -160,10 +170,10 @@ double get_stellar_disk_radius(int p)
       Radius=RingRadius[0]/2.;
     else
       {
-	Radius=0.5*RingRadius[0]*Gal[p].DiskMassRings[0];
-	for(jj=1;jj<RNUM;jj++)
-	  Radius+=(0.5*(RingRadius[jj-1]+RingRadius[jj])*Gal[p].DiskMassRings[jj]);
-	Radius=3.0*Radius/Gal[p].DiskMass/2.0;      //2.0=mean radius/scale length for exponential disk
+	      Radius=0.5*RingRadius[0]*Gal[p].DiskMassRings[0];
+	      for(jj=1;jj<RNUM;jj++)
+	        Radius+=(0.5*(RingRadius[jj-1]+RingRadius[jj])*Gal[p].DiskMassRings[jj]);
+	        Radius=3.0*Radius/Gal[p].DiskMass/2.0;      //2.0=mean radius/scale length for exponential disk
       }
 #endif
 
@@ -683,40 +693,29 @@ void init_galaxy(int p, int halonr)
 // This assumes all dust is in the ISM. If you add/consider dust in the CGM/ICM etc. you
 // should create a new structure i.e. Gal[p].Dust_CGM_elements
   //int ee;
-#ifdef H2_AND_RINGS
+  int ss, bb;
+#ifdef H2_AND_RINGS 
   int jj;
-  for(ee=0;ee<NUM_ELEMENTS;ee++) {
-  	   Gal[p].DustColdGasDiff_elements[ee] = 0.;
-  	   Gal[p].DustColdGasClouds_elements[ee] = 0.;
-#ifdef DUST_HOTGAS
-  	   Gal[p].DustHotGas_elements[ee] = 0.;
-#endif //DUST_HOTGAS
-#ifdef DUST_EJECTEDMASS
-  	   Gal[p].DustEjectedMass_elements[ee] = 0.;
-#endif //DUST_EJECTEDMASS
-  	   for(jj=0; jj<RNUM; jj++) {
-  		   Gal[p].DustColdGasDiffRings_elements[jj][ee] = 0.;
-  		   Gal[p].DustColdGasCloudsRings_elements[jj][ee] = 0.;
-  		   Gal[p].f_i[jj][ee] = 0.;
-  		   Gal[p].f_c[jj][ee] = 0.;
-//NOTE: (19-05-23): The following will assume any elements other than H, He, N, Ne, and S included in the elements arrays are refractory (i.e. can have a max. dust fraction of 1.0):
-#ifndef MAINELEMENTS
-  		   if ((ee==H_NUM) || (ee==He_NUM) || (ee==N_NUM) || (ee==Ne_NUM) || (ee==S_NUM)) //H, He, N, Ne, S
-  			   Gal[p].f_cmax[jj][ee] = 0.0;
-  		   else //C, O, Mg, Si, Ca, Fe, etc
-  			   Gal[p].f_cmax[jj][ee] = 1.0;
-#else
-  		   if ((ee==H_NUM) || (ee==He_NUM)) //H, He
-  			   Gal[p].f_cmax[jj][ee] = 0.0;
-  		   else //O, Mg, Fe
-  			   Gal[p].f_cmax[jj][ee] = 1.0;
-#endif //MAINELEMENTS
-  	   }
+  for(ss=0; ss<NUM_DUST_SPECIES; ss++) {
+    for(bb=0; bb<NUM_SIZE_BINS; bb++) {
+      for(jj=0; jj<RNUM; jj++) {
+        Gal[p].DustMassColdGasDiffRings[jj][ss][bb] = 0.;
+        Gal[p].DustNumColdGasDiffRings[jj][ss][bb] = 0.;
+        Gal[p].DustAreaColdGasDiffRings[jj][ss][bb] = 0.;
+        Gal[p].DustMassColdGasCloudsRings[jj][ss][bb] = 0.;
+        Gal[p].DustNumColdGasCloudsRings[jj][ss][bb] = 0.;
+        Gal[p].DustAreaColdGasCloudsRings[jj][ss][bb] = 0.;
+        Gal[p].f_i[jj][ss] = 0.;
+        Gal[p].f_c[jj][ss] = 0.;
+        Gal[p].f_cmax[jj][ss] = 1.;
+      }
+    }
   }
   for(jj=0; jj<RNUM; jj++) {
 	   Gal[p].t_des[jj] = 0.;
   }
   //Gal[p].t_des = 0.;
+// #endif //H2_AND_RINGS
 #ifdef DUST_HOTGAS
   Gal[p].t_sput_HotGas = 0.;
 #endif //DUST_HOTGAS
@@ -732,14 +731,26 @@ void init_galaxy(int p, int halonr)
 #endif //TAU_RINGS
 
 #else //H2_AND_RINGS
-   for(ee=0;ee<NUM_ELEMENTS;ee++) {
-	   Gal[p].DustColdGasDiff_elements[ee] = 0.;
-	   Gal[p].DustColdGasClouds_elements[ee] = 0.;
+   int ss, bb;
+   for(ss=0; ss<NUM_DUST_SPECIES; ss++) {
+    for(bb=0; bb<NUM_SIZE_BINS; bb++) {
+      Gal[p].DustMassColdGasDiff[ss][bb] = 0.;
+      Gal[p].DustNumColdGasDiff[ss][bb] = 0.;
+      Gal[p].DustAreaColdGasDiff[ss][bb] = 0.;
+      Gal[p].DustMassColdGasClouds[ss][bb] = 0.;
+      Gal[p].DustNumColdGasClouds[ss][bb] = 0.;
+      Gal[p].DustAreaColdGasClouds[ss][bb] = 0.;
+    }
+   }
 #ifdef DUST_HOTGAS
-	   Gal[p].DustHotGas_elements[ee] = 0.;
+	    Gal[p].DustMassHotGas[ss][bb] = 0.;
+      Gal[p].DustNumHotGas[ss][bb] = 0.;
+      Gal[p].DustAreaHotGas[ss][bb] = 0.;
 #endif //DUST_HOTGAS
 #ifdef DUST_EJECTEDMASS
-  	   Gal[p].DustEjectedMass_elements[ee] = 0.;
+  	  Gal[p].DustMassEjected[ss][bb] = 0.;
+      Gal[p].DustNumEjected[ss][bb] = 0.;
+      Gal[p].DustAreaEjected[ss][bb] = 0.;
 #endif //DUST_EJECTEDMASS
    }
 Gal[p].t_des = 0.;
@@ -751,33 +762,21 @@ Gal[p].t_des = 0.;
 #endif //DUST_EJECTEDMASS
 #ifdef TAU_RINGS
   for(jj=0; jj<RNUM; jj++) {
-	   Gal[p].t_acc[jj] = 1E15;
+     Gal[p].t_acc[jj] = 1E15;
   }
 #else //TAU_RINGS
   Gal[p].t_acc = 1E15;
 #endif //TAU_RINGS
    //[H][He][C][N][O][Ne][Mg][Si][S][Ca][Fe]
-   for(j=0; j<NUM_ELEMENTS; j++) {
-       Gal[p].f_i[j] = 0.;
-       Gal[p].f_c[j] = 0.;
-//NOTE: (19-05-23): The following will assume any elements other than H, He, N, Ne, and S included in the elements arrays are refractory (i.e. can have a max. dust fraction of 1.0):
-       #ifndef MAINELEMENTS
-       //if ((j == 0) || (j == 1) || (j == 3) || (j == 5) || (j==8))
-       if ((j==H_NUM) || (j==He_NUM) || (j==N_NUM) || (j==Ne_NUM) || (j==S_NUM)) //H, He, N, Ne, S
-    	   Gal[p].f_cmax[j] = 0.0; //f_cmax_default[j]; //1.;
-       else //C, O, Mg, Si, Ca, Fe
-    	   Gal[p].f_cmax[j] = 1.0;
-#else //MAINELEMENTS
-       //if ((j == 0) || (j == 1))
-       if ((j==H_NUM) || (j==He_NUM)) //H, He
-    	   Gal[p].f_cmax[j] = 0.0;
-       else //O, Mg, Fe
-    	   Gal[p].f_cmax[j] = 1.0;
-#endif //MAINELEMENTS
+   for(jj=0; jj<NUM_DUST_SPECIES; jj++) {
+       Gal[p].f_i[jj] = 0.;
+       Gal[p].f_c[jj] = 0.;
+       Gal[p].f_cmax[jj] = 1.0;
    }
 #endif //H2_AND_RINGS
 #endif //DETAILED_DUST
-}
+// }
+
 
 /*TODO take away magnitudes and work with luminositites*/
 
@@ -1404,7 +1403,7 @@ void transfer_material(int p, char cp[], int q, char cq[], double fraction, char
 
 #ifdef DETAILED_DUST
   //ROB: Note: fraction won't equal fractionClouds + fractionDiff when transferring material between components that contain no dust (i.e. any excluding ColdGas):
-  if ((strcmp(cq,"ColdGas")==0 || strcmp(cp,"ColdGas")==0) && (fractionClouds * Gal[q].ColdGasClouds_elements[0] + fractionDiff * Gal[q].ColdGasDiff_elements[0] != fraction * Gal[q].ColdGas_elements[0])) {
+  if ((strcmp(cq,"ColdGas")==0 || strcmp(cp,"ColdGas")==0) && fabs(fractionClouds * Gal[q].ColdGasClouds_elements[0] + fractionDiff * Gal[q].ColdGasDiff_elements[0] - fraction * Gal[q].ColdGas_elements[0]) > PRECISION_LIMIT * fraction * Gal[q].ColdGas_elements[0] + 1e-10) {
 	  char sbuf[1000];
 	        sprintf(sbuf, "\nparent call from: %s, line %d \ntransfer_material: transfer fractions aren't synchronised.\n fraction = %.11f, fractionClouds = %.11f, fractionDiff = %.11f.\n",
 	  	      call_function, call_line, fraction, fractionClouds, fractionDiff);
@@ -1422,8 +1421,6 @@ void transfer_material(int p, char cp[], int q, char cq[], double fraction, char
 #ifdef DETAILED_DUST
   	Yield_clouds[ee] = 0.;
   	Yield_diffuse[ee] = 0.;
-  	Dust_clouds[ee] = 0.;
-  	Dust_diffuse[ee] = 0.;
 #endif
   }
 #endif
@@ -1477,10 +1474,20 @@ void transfer_material(int p, char cp[], int q, char cq[], double fraction, char
 #ifdef DETAILED_DUST
       	  Yield_clouds[ee] = Gal[q].ColdGasClouds_elements[ee]*fractionClouds;
       	  Yield_diffuse[ee] = Gal[q].ColdGasDiff_elements[ee]*fractionDiff;
-      	  Dust_clouds[ee] = Gal[q].DustColdGasClouds_elements[ee]*fractionClouds;
-      	  Dust_diffuse[ee] = Gal[q].DustColdGasDiff_elements[ee]*fractionDiff;
 #endif
       }
+#ifdef DETAILED_DUST
+      for(int ss=0; ss<NUM_DUST_SPECIES; ss++) {
+        for(int bb=0; bb<NUM_SIZE_BINS; bb++) {
+          TransDustMass_clouds[ss][bb]  = Gal[q].DustMassColdGasClouds[ss][bb]*fractionClouds;
+          TransDustMass_diffuse[ss][bb] = Gal[q].DustMassColdGasDiff[ss][bb]*fractionDiff;
+          TransDustNum_clouds[ss][bb]   = Gal[q].DustNumColdGasClouds[ss][bb]*fractionClouds;
+          TransDustNum_diffuse[ss][bb]  = Gal[q].DustNumColdGasDiff[ss][bb]*fractionDiff;
+          TransDustArea_clouds[ss][bb]  = Gal[q].DustAreaColdGasClouds[ss][bb]*fractionClouds;
+          TransDustArea_diffuse[ss][bb] = Gal[q].DustAreaColdGasDiff[ss][bb]*fractionDiff;
+        }
+      }
+#endif
 #endif
       //if there is SF, gas goes to stars into the last sfh bin
 #ifdef STAR_FORMATION_HISTORY
@@ -1519,12 +1526,22 @@ void transfer_material(int p, char cp[], int q, char cq[], double fraction, char
 #ifdef DETAILED_DUST
       	  Yield_clouds[ee] = Gal[q].HotGas_elements[ee]*fractionClouds;
       	  Yield_diffuse[ee] = Gal[q].HotGas_elements[ee]*fractionDiff;
-#ifdef DUST_HOTGAS
-      	  Dust_clouds[ee] = Gal[q].DustHotGas_elements[ee]*fractionClouds;
-      	  Dust_diffuse[ee] = Gal[q].DustHotGas_elements[ee]*fractionDiff;
-#endif //DUST_HOTGAS
 #endif //DETAILED_DUST
       }
+#ifdef DETAILED_DUST
+#ifdef DUST_HOTGAS
+      for(ss=0; ss<NUM_DUST_SPECIES; ss++) {
+        for(bb=0; bb<NUM_SIZE_BINS; bb++) {
+          TransDustMass_clouds[ss][bb]  = Gal[q].DustMassHotGas[ss][bb]*fractionClouds;
+          TransDustMass_diffuse[ss][bb] = Gal[q].DustMassHotGas[ss][bb]*fractionDiff;
+          TransDustNum_clouds[ss][bb]   = Gal[q].DustNumHotGas[ss][bb]*fractionClouds;
+          TransDustNum_diffuse[ss][bb]  = Gal[q].DustNumHotGas[ss][bb]*fractionDiff;
+          TransDustArea_clouds[ss][bb]  = Gal[q].DustAreaHotGas[ss][bb]*fractionClouds;
+          TransDustArea_diffuse[ss][bb] = Gal[q].DustAreaHotGas[ss][bb]*fractionDiff;
+        }
+      }
+#endif //DUST_HOTGAS
+#endif //DETAILED_DUST
 #endif //INDIVIDUAL_ELEMENTS
   }
 
@@ -1551,12 +1568,22 @@ void transfer_material(int p, char cp[], int q, char cq[], double fraction, char
 #ifdef DETAILED_DUST
       	  Yield_clouds[ee] = Gal[q].EjectedMass_elements[ee]*fractionClouds;
       	  Yield_diffuse[ee] = Gal[q].EjectedMass_elements[ee]*fractionDiff;
-#ifdef DUST_EJECTEDMASS
-      	  Dust_clouds[ee] = Gal[q].DustEjectedMass_elements[ee]*fractionClouds;
-      	  Dust_diffuse[ee] = Gal[q].DustEjectedMass_elements[ee]*fractionDiff;
-#endif //DUST_EJECTEDMASS
 #endif //DETAILED_DUST
       }
+#ifdef DETAILED_DUST
+#ifdef DUST_EJECTEDMASS
+      for(ss=0; ss<NUM_DUST_SPECIES; ss++) {
+        for(bb=0; bb<NUM_SIZE_BINS; bb++) {
+          TransDustMass_clouds[ss][bb]  = Gal[q].DustMassEjected[ss][bb]*fractionClouds;
+          TransDustMass_diffuse[ss][bb] = Gal[q].DustMassEjected[ss][bb]*fractionDiff;
+          TransDustNum_clouds[ss][bb]   = Gal[q].DustNumEjected[ss][bb]*fractionClouds;
+          TransDustNum_diffuse[ss][bb]  = Gal[q].DustNumEjected[ss][bb]*fractionDiff;
+          TransDustArea_clouds[ss][bb]  = Gal[q].DustAreaEjected[ss][bb]*fractionClouds;
+          TransDustArea_diffuse[ss][bb] = Gal[q].DustAreaEjected[ss][bb]*fractionDiff;
+        }
+      }
+#endif //DUST_EJECTEDMASS
+#endif //DETAILED_DUST
 #endif //INDIVIDUAL_ELEMENTS
   }
 
@@ -1780,6 +1807,18 @@ void transfer_material(int p, char cp[], int q, char cq[], double fraction, char
       	  Gal[p].DustColdGasDiff_elements[ee] += Dust_diffuse[ee];
 #endif
       }
+#ifdef DETAILED_DUST
+      for(ss=0; ss<NUM_DUST_SPECIES; ss++) {
+        for(bb=0; bb<NUM_SIZE_BINS; bb++) {
+          Gal[p].DustMassColdGasClouds[ss][bb] += TransDustMass_clouds[ss][bb];
+          Gal[p].DustMassColdGasDiff[ss][bb] += TransDustMass_diffuse[ss][bb];
+          Gal[p].DustNumColdGasClouds[ss][bb] += TransDustNum_clouds[ss][bb];
+          Gal[p].DustNumColdGasDiff[ss][bb] += TransDustNum_diffuse[ss][bb];
+          Gal[p].DustAreaColdGasClouds[ss][bb] += TransDustArea_clouds[ss][bb];
+          Gal[p].DustAreaColdGasDiff[ss][bb] += TransDustArea_diffuse[ss][bb];
+        }
+      }
+#endif
 #endif
   }
 
@@ -2057,6 +2096,18 @@ void transfer_material(int p, char cp[], int q, char cq[], double fraction, char
       	  Gal[q].DustColdGasDiff_elements[ee] -= Dust_diffuse[ee];
 #endif
       }
+#ifdef DETAILED_DUST
+      for(ss=0; ss<NUM_DUST_SPECIES; ss++) {
+        for(bb=0; bb<NUM_SIZE_BINS; bb++) {
+          Gal[q].DustMassColdGasClouds[ss][bb] -= TransDustMass_clouds[ss][bb];
+          Gal[q].DustMassColdGasDiff[ss][bb] -= TransDustMass_diffuse[ss][bb];
+          Gal[q].DustNumColdGasClouds[ss][bb] -= TransDustNum_clouds[ss][bb];
+          Gal[q].DustNumColdGasDiff[ss][bb] -= TransDustNum_diffuse[ss][bb];
+          Gal[q].DustAreaColdGasClouds[ss][bb] -= TransDustArea_clouds[ss][bb];
+          Gal[q].DustAreaColdGasDiff[ss][bb] -= TransDustArea_diffuse[ss][bb];
+        }
+      }
+#endif
 #endif
   }
 
@@ -2074,6 +2125,17 @@ void transfer_material(int p, char cp[], int q, char cq[], double fraction, char
 #endif //DUST_HOTGAS
 #endif //DETAILED_DUST
       }
+#ifdef DETAILED_DUST
+#ifdef DUST_HOTGAS
+      for(ss=0; ss<NUM_DUST_SPECIES; ss++) {
+        for(bb=0; bb<NUM_SIZE_BINS; bb++) {
+          Gal[q].DustMassHotGas[ss][bb] -= (TransDustMass_diffuse[ss][bb] + TransDustMass_clouds[ss][bb]);
+          Gal[q].DustNumHotGas[ss][bb] -= (TransDustNum_diffuse[ss][bb] + TransDustNum_clouds[ss][bb]);
+          Gal[q].DustAreaHotGas[ss][bb] -= (TransDustArea_diffuse[ss][bb] + TransDustArea_clouds[ss][bb]);
+        }
+      }
+#endif //DUST_HOTGAS
+#endif //DETAILED_DUST
 #endif
 #ifdef METALS_SELF
       for(mm=0;mm<NUM_METAL_CHANNELS;mm++)
@@ -2369,11 +2431,25 @@ void transfer_material_with_rings(int p, char cp[], int q, char cq[], double fra
 #ifdef DETAILED_DUST
   double Yield_cloudsRings[RNUM][NUM_ELEMENTS];
   double Yield_diffuseRings[RNUM][NUM_ELEMENTS];
-  double Dust_cloudsRings[RNUM][NUM_ELEMENTS];
-  double Dust_diffuseRings[RNUM][NUM_ELEMENTS];
 #endif //DETAILED_DUST
 #endif //INDIVIDUAL_ELEMENTS
 #endif //DETAILED_METALS_AND_MASS_RETURN
+#ifdef DETAILED_DUST
+  int ss, bb;
+  double TransDustMass_clouds[NUM_DUST_SPECIES][NUM_SIZE_BINS];
+  double TransDustMass_diffuse[NUM_DUST_SPECIES][NUM_SIZE_BINS];
+  double TransDustNum_clouds[NUM_DUST_SPECIES][NUM_SIZE_BINS];
+  double TransDustNum_diffuse[NUM_DUST_SPECIES][NUM_SIZE_BINS];
+  double TransDustArea_clouds[NUM_DUST_SPECIES][NUM_SIZE_BINS];
+  double TransDustArea_diffuse[NUM_DUST_SPECIES][NUM_SIZE_BINS];
+
+  double TransDustMass_cloudsRings[RNUM][NUM_DUST_SPECIES][NUM_SIZE_BINS];
+  double TransDustMass_diffRings[RNUM][NUM_DUST_SPECIES][NUM_SIZE_BINS];
+  double TransDustNum_cloudsRings[RNUM][NUM_DUST_SPECIES][NUM_SIZE_BINS];
+  double TransDustNum_diffRings[RNUM][NUM_DUST_SPECIES][NUM_SIZE_BINS];
+  double TransDustArea_cloudsRings[RNUM][NUM_DUST_SPECIES][NUM_SIZE_BINS];
+  double TransDustArea_diffRings[RNUM][NUM_DUST_SPECIES][NUM_SIZE_BINS];
+#endif
 
   //Initialize arrays to contain mass to transfer:
    Mass = 0.;
@@ -2385,16 +2461,25 @@ void transfer_material_with_rings(int p, char cp[], int q, char cq[], double fra
 #ifdef DETAILED_DUST
 	   Yield_clouds[ee] = 0.;
 	   Yield_diffuse[ee] = 0.;
-	   Dust_clouds[ee] = 0.;
-	   Dust_diffuse[ee] = 0.;
 	   for (jj=0;jj<RNUM;jj++) {
 		   Yield_cloudsRings[jj][ee] = 0.;
 		   Yield_diffuseRings[jj][ee] = 0.;
-		   //These are forced to 0.0 here as they are sometimes not updated below (i.e. when transferring to/from a component with no dust):
-		   Dust_cloudsRings[jj][ee] = 0.;
-		   Dust_diffuseRings[jj][ee] = 0.;
 	   }
 #endif
+   }
+#endif
+#ifdef DETAILED_DUST
+   for(ss=0; ss<NUM_DUST_SPECIES; ss++) {
+     for(bb=0; bb<NUM_SIZE_BINS; bb++) {
+       TransDustMass_clouds[ss][bb] = 0.; TransDustMass_diffuse[ss][bb] = 0.;
+       TransDustNum_clouds[ss][bb] = 0.; TransDustNum_diffuse[ss][bb] = 0.;
+       TransDustArea_clouds[ss][bb] = 0.; TransDustArea_diffuse[ss][bb] = 0.;
+       for (jj=0;jj<RNUM;jj++) {
+         TransDustMass_cloudsRings[jj][ss][bb] = 0.; TransDustMass_diffRings[jj][ss][bb] = 0.;
+         TransDustNum_cloudsRings[jj][ss][bb] = 0.; TransDustNum_diffRings[jj][ss][bb] = 0.;
+         TransDustArea_cloudsRings[jj][ss][bb] = 0.; TransDustArea_diffRings[jj][ss][bb] = 0.;
+       }
+     }
    }
 #endif
 
@@ -2469,12 +2554,8 @@ void transfer_material_with_rings(int p, char cp[], int q, char cq[], double fra
 #ifdef DETAILED_DUST
 	       Yield_clouds[ee] += fractionCloudsRings[jj] * Gal[q].ColdGasCloudsRings_elements[jj][ee];
 		   Yield_diffuse[ee] += fractionDiffRings[jj] * Gal[q].ColdGasDiffRings_elements[jj][ee];
-		   Dust_clouds[ee] += fractionCloudsRings[jj] * Gal[q].DustColdGasCloudsRings_elements[jj][ee];
-		   Dust_diffuse[ee] += fractionDiffRings[jj] * Gal[q].DustColdGasDiffRings_elements[jj][ee];
 		   Yield_cloudsRings[jj][ee] = fractionCloudsRings[jj] * Gal[q].ColdGasCloudsRings_elements[jj][ee];
 		   Yield_diffuseRings[jj][ee] = fractionDiffRings[jj] * Gal[q].ColdGasDiffRings_elements[jj][ee];
-		   Dust_cloudsRings[jj][ee] = fractionCloudsRings[jj] * Gal[q].DustColdGasCloudsRings_elements[jj][ee];
-		   Dust_diffuseRings[jj][ee] = fractionDiffRings[jj] * Gal[q].DustColdGasDiffRings_elements[jj][ee];
 
 		   /*//ROB: This was the old way I did it, before the clouds/diff rings arrays were added: (01-02-22):
 		   Yield_clouds[ee] += Gal[q].ColdGasClouds_elements[ee]*fractionClouds/RNUM;
@@ -2560,12 +2641,6 @@ void transfer_material_with_rings(int p, char cp[], int q, char cq[], double fra
 			   Yield_diffuse[ee] += fractionDiffRings[jj] * Gal[q].HotGas_elements[ee];
 			   Yield_cloudsRings[jj][ee] = fractionCloudsRings[jj] * Gal[q].HotGas_elements[ee];
 			   Yield_diffuseRings[jj][ee] = fractionDiffRings[jj] * Gal[q].HotGas_elements[ee];
-#ifdef DUST_HOTGAS
-			   Dust_clouds[ee] += fractionCloudsRings[jj] * Gal[q].DustHotGas_elements[ee]; //This is necessary as dust could cool from the HotGas directly into the cloud sub-comonent of the ColdGas.
-			   Dust_diffuse[ee] += fractionDiffRings[jj] * Gal[q].DustHotGas_elements[ee];
-			   Dust_cloudsRings[jj][ee] = fractionCloudsRings[jj] * Gal[q].DustHotGas_elements[ee]; //These are necessary as dust could cool from the HotGas onto the cloud/diffuse sub-components of each of the ColdGas rings.
-			   Dust_diffuseRings[jj][ee] = fractionDiffRings[jj] * Gal[q].DustHotGas_elements[ee];
-#endif //DUST_HOTGAS
 			   /* ROB: Old way:
     		   Yield_clouds[ee] += Gal[q].HotGas_elements[ee]*fractionClouds/RNUM;
     		   Yield_diffuse[ee] += Gal[q].HotGas_elements[ee]*fractionDiff/RNUM;
@@ -2597,14 +2672,19 @@ void transfer_material_with_rings(int p, char cp[], int q, char cq[], double fra
 			   Yield_diffuse[ee] += fractionDiffRings[jj] * Gal[q].EjectedMass_elements[ee];
 			   Yield_cloudsRings[jj][ee] = fractionCloudsRings[jj] * Gal[q].EjectedMass_elements[ee];
 			   Yield_diffuseRings[jj][ee] = fractionDiffRings[jj] * Gal[q].EjectedMass_elements[ee];
-#ifdef DUST_EJECTEDMASS
-			   Dust_clouds[ee] += fractionCloudsRings[jj] * Gal[q].DustEjectedMass_elements[ee];
-			   Dust_diffuse[ee] += fractionDiffRings[jj] * Gal[q].DustEjectedMass_elements[ee];
-			   Dust_cloudsRings[jj][ee] = fractionCloudsRings[jj] * Gal[q].DustEjectedMass_elements[ee];
-			   Dust_diffuseRings[jj][ee] = fractionDiffRings[jj] * Gal[q].DustEjectedMass_elements[ee];
-#endif //DUST_EJECTEDMASS
 #endif //DETAILED_DUST
     	   }
+#ifdef DETAILED_DUST
+#ifdef DUST_EJECTEDMASS
+      for(ss=0; ss<NUM_DUST_SPECIES; ss++) {
+        for(bb=0; bb<NUM_SIZE_BINS; bb++) {
+          Gal[q].DustMassEjected[ss][bb] -= (TransDustMass_diffuse[ss][bb] + TransDustMass_clouds[ss][bb]);
+          Gal[q].DustNumEjected[ss][bb] -= (TransDustNum_diffuse[ss][bb] + TransDustNum_clouds[ss][bb]);
+          Gal[q].DustAreaEjected[ss][bb] -= (TransDustArea_diffuse[ss][bb] + TransDustArea_clouds[ss][bb]);
+        }
+      }
+#endif //DUST_EJECTEDMASS
+#endif //DETAILED_DUST
    #endif
        }
      }
@@ -2937,8 +3017,6 @@ void transfer_material_with_rings(int p, char cp[], int q, char cq[], double fra
 #ifdef DETAILED_DUST
       	   Gal[p].ColdGasClouds_elements[ee] += Yield_clouds[ee];
       	   Gal[p].ColdGasDiff_elements[ee] += Yield_diffuse[ee];
-      	   Gal[p].DustColdGasClouds_elements[ee] += Dust_clouds[ee];
-      	   Gal[p].DustColdGasDiff_elements[ee] += Dust_diffuse[ee];
 #endif
        }
 #endif
@@ -2957,6 +3035,30 @@ void transfer_material_with_rings(int p, char cp[], int q, char cq[], double fra
     		   Gal[p].DustColdGasDiffRings_elements[jj][ee] += Dust_diffuseRings[jj][ee];
 #endif
     	   }
+#ifdef DETAILED_DUST
+           for(ss=0; ss<NUM_DUST_SPECIES; ss++) {
+             for(bb=0; bb<NUM_SIZE_BINS; bb++) {
+               Gal[p].DustMassColdGasCloudsRings[jj][ss][bb] += TransDustMass_cloudsRings[jj][ss][bb];
+               Gal[p].DustMassColdGasDiffRings[jj][ss][bb] += TransDustMass_diffRings[jj][ss][bb];
+               Gal[p].DustNumColdGasCloudsRings[jj][ss][bb] += TransDustNum_cloudsRings[jj][ss][bb];
+               Gal[p].DustNumColdGasDiffRings[jj][ss][bb] += TransDustNum_diffRings[jj][ss][bb];
+               Gal[p].DustAreaColdGasCloudsRings[jj][ss][bb] += TransDustArea_cloudsRings[jj][ss][bb];
+               Gal[p].DustAreaColdGasDiffRings[jj][ss][bb] += TransDustArea_diffRings[jj][ss][bb];
+             }
+           }
+#endif
+#ifdef DETAILED_DUST
+           for(ss=0; ss<NUM_DUST_SPECIES; ss++) {
+             for(bb=0; bb<NUM_SIZE_BINS; bb++) {
+               Gal[p].DustMassColdGasClouds[ss][bb] += TransDustMass_clouds[ss][bb];
+               Gal[p].DustMassColdGasDiff[ss][bb] += TransDustMass_diffuse[ss][bb];
+               Gal[p].DustNumColdGasClouds[ss][bb] += TransDustNum_clouds[ss][bb];
+               Gal[p].DustNumColdGasDiff[ss][bb] += TransDustNum_diffuse[ss][bb];
+               Gal[p].DustAreaColdGasClouds[ss][bb] += TransDustArea_clouds[ss][bb];
+               Gal[p].DustAreaColdGasDiff[ss][bb] += TransDustArea_diffuse[ss][bb];
+             }
+           }
+#endif
 #endif
        }
      }
@@ -2969,15 +3071,18 @@ void transfer_material_with_rings(int p, char cp[], int q, char cq[], double fra
 #ifdef INDIVIDUAL_ELEMENTS
        for(ee=0;ee<NUM_ELEMENTS;ee++) {
     	   Gal[p].HotGas_elements[ee] += Yield[ee];
-    	   //ROB: N.B. DustColdGasClouds_elements is just a sub-component of ColdGasClouds_elements (and therefore a sub-sub-component of Elements),
-    	   //so we don't need to also add the element masses in the destroyed dust here - they are already added in the elements-transfer line above. (26-11-21)
+       }
 #ifdef DETAILED_DUST
 #ifdef DUST_HOTGAS
-    	   ////Gal[p].HotGas_elements[ee] += Yield_diffuse[ee] + Yield_clouds[ee]; //This would just be a repetition of the Gal[p].HotGas_elements[ee] += Yield[ee] line above.
-    	   Gal[p].DustHotGas_elements[ee] += Dust_diffuse[ee] + Dust_clouds[ee]; //Dust from both diffuse gas and clouds are added here, as the ColdGas could eject both types into the HotGas.
+       for(ss=0; ss<NUM_DUST_SPECIES; ss++) {
+         for(bb=0; bb<NUM_SIZE_BINS; bb++) {
+           Gal[p].DustMassHotGas[ss][bb] += TransDustMass_diffuse[ss][bb] + TransDustMass_clouds[ss][bb];
+           Gal[p].DustNumHotGas[ss][bb] += TransDustNum_diffuse[ss][bb] + TransDustNum_clouds[ss][bb];
+           Gal[p].DustAreaHotGas[ss][bb] += TransDustArea_diffuse[ss][bb] + TransDustArea_clouds[ss][bb];
+         }
+       }
 #endif //DUST_HOTGAS
 #endif //DETAILED_DUST
-       }
 #endif //INDIVIDUAL_ELEMENTS
 #ifdef METALS_SELF
        if (p==q)
@@ -3006,12 +3111,28 @@ void transfer_material_with_rings(int p, char cp[], int q, char cq[], double fra
  #ifdef INDIVIDUAL_ELEMENTS
        for(ee=0;ee<NUM_ELEMENTS;ee++) {
      	  Gal[p].EjectedMass_elements[ee] += Yield[ee];
+       }
 #ifdef DETAILED_DUST
 #ifdef DUST_EJECTEDMASS
-    	   Gal[p].DustEjectedMass_elements[ee] += Dust_diffuse[ee] + Dust_clouds[ee]; //For the hypothetical scenario where ColdGas ejected dust directly into the EjectedMass component.
+           for(ss=0; ss<NUM_DUST_SPECIES; ss++) {
+             for(bb=0; bb<NUM_SIZE_BINS; bb++) {
+               TransDustMass_clouds[ss][bb] += fractionCloudsRings[jj] * Gal[q].DustMassEjected[ss][bb];
+               TransDustMass_diffuse[ss][bb] += fractionDiffRings[jj] * Gal[q].DustMassEjected[ss][bb];
+               TransDustNum_clouds[ss][bb] += fractionCloudsRings[jj] * Gal[q].DustNumEjected[ss][bb];
+               TransDustNum_diffuse[ss][bb] += fractionDiffRings[jj] * Gal[q].DustNumEjected[ss][bb];
+               TransDustArea_clouds[ss][bb] += fractionCloudsRings[jj] * Gal[q].DustAreaEjected[ss][bb];
+               TransDustArea_diffuse[ss][bb] += fractionDiffRings[jj] * Gal[q].DustAreaEjected[ss][bb];
+
+               TransDustMass_cloudsRings[jj][ss][bb] = fractionCloudsRings[jj] * Gal[q].DustMassEjected[ss][bb];
+               TransDustMass_diffRings[jj][ss][bb] = fractionDiffRings[jj] * Gal[q].DustMassEjected[ss][bb];
+               TransDustNum_cloudsRings[jj][ss][bb] = fractionCloudsRings[jj] * Gal[q].DustNumEjected[ss][bb];
+               TransDustNum_diffRings[jj][ss][bb] = fractionDiffRings[jj] * Gal[q].DustNumEjected[ss][bb];
+               TransDustArea_cloudsRings[jj][ss][bb] = fractionCloudsRings[jj] * Gal[q].DustAreaEjected[ss][bb];
+               TransDustArea_diffRings[jj][ss][bb] = fractionDiffRings[jj] * Gal[q].DustAreaEjected[ss][bb];
+             }
+           }
 #endif //DUST_EJECTEDMASS
 #endif //DETAILED_DUST
-       }
  #endif
    }
 
@@ -3275,8 +3396,6 @@ void transfer_material_with_rings(int p, char cp[], int q, char cq[], double fra
 #ifdef DETAILED_DUST
     	  Gal[q].ColdGasClouds_elements[ee] -= Yield_clouds[ee];
     	  Gal[q].ColdGasDiff_elements[ee] -= Yield_diffuse[ee];
-      	  Gal[q].DustColdGasClouds_elements[ee] -= Dust_clouds[ee];
-      	  Gal[q].DustColdGasDiff_elements[ee] -= Dust_diffuse[ee];
 #endif
        }
 #endif
@@ -3295,6 +3414,30 @@ void transfer_material_with_rings(int p, char cp[], int q, char cq[], double fra
 			   Gal[q].DustColdGasDiffRings_elements[jj][ee] -= Dust_diffuseRings[jj][ee];
 #endif
     	   }
+#ifdef DETAILED_DUST
+           for(ss=0; ss<NUM_DUST_SPECIES; ss++) {
+             for(bb=0; bb<NUM_SIZE_BINS; bb++) {
+               Gal[q].DustMassColdGasCloudsRings[jj][ss][bb] -= TransDustMass_cloudsRings[jj][ss][bb];
+               Gal[q].DustMassColdGasDiffRings[jj][ss][bb] -= TransDustMass_diffRings[jj][ss][bb];
+               Gal[q].DustNumColdGasCloudsRings[jj][ss][bb] -= TransDustNum_cloudsRings[jj][ss][bb];
+               Gal[q].DustNumColdGasDiffRings[jj][ss][bb] -= TransDustNum_diffRings[jj][ss][bb];
+               Gal[q].DustAreaColdGasCloudsRings[jj][ss][bb] -= TransDustArea_cloudsRings[jj][ss][bb];
+               Gal[q].DustAreaColdGasDiffRings[jj][ss][bb] -= TransDustArea_diffRings[jj][ss][bb];
+             }
+           }
+#endif
+#ifdef DETAILED_DUST
+           for(ss=0; ss<NUM_DUST_SPECIES; ss++) {
+             for(bb=0; bb<NUM_SIZE_BINS; bb++) {
+               Gal[q].DustMassColdGasClouds[ss][bb] -= TransDustMass_clouds[ss][bb];
+               Gal[q].DustMassColdGasDiff[ss][bb] -= TransDustMass_diffuse[ss][bb];
+               Gal[q].DustNumColdGasClouds[ss][bb] -= TransDustNum_clouds[ss][bb];
+               Gal[q].DustNumColdGasDiff[ss][bb] -= TransDustNum_diffuse[ss][bb];
+               Gal[q].DustAreaColdGasClouds[ss][bb] -= TransDustArea_clouds[ss][bb];
+               Gal[q].DustAreaColdGasDiff[ss][bb] -= TransDustArea_diffuse[ss][bb];
+             }
+           }
+#endif
 #endif
        }
      }
@@ -3307,12 +3450,18 @@ void transfer_material_with_rings(int p, char cp[], int q, char cq[], double fra
    #ifdef INDIVIDUAL_ELEMENTS
         for(ee=0;ee<NUM_ELEMENTS;ee++) {
           Gal[q].HotGas_elements[ee] -= Yield[ee];
+        }
 #ifdef DETAILED_DUST
 #ifdef DUST_HOTGAS
-          Gal[q].DustHotGas_elements[ee] -= (Dust_diffuse[ee] + Dust_clouds[ee]);
+        for(ss=0; ss<NUM_DUST_SPECIES; ss++) {
+          for(bb=0; bb<NUM_SIZE_BINS; bb++) {
+            Gal[q].DustMassHotGas[ss][bb] -= (TransDustMass_diffuse[ss][bb] + TransDustMass_clouds[ss][bb]);
+            Gal[q].DustNumHotGas[ss][bb] -= (TransDustNum_diffuse[ss][bb] + TransDustNum_clouds[ss][bb]);
+            Gal[q].DustAreaHotGas[ss][bb] -= (TransDustArea_diffuse[ss][bb] + TransDustArea_clouds[ss][bb]);
+          }
+        }
 #endif //DUST_HOTGAS
 #endif //DETAILED_DUST
-        }
 #endif
    #ifdef METALS_SELF
         for(mm=0;mm<NUM_METAL_CHANNELS;mm++)
@@ -3340,12 +3489,18 @@ void transfer_material_with_rings(int p, char cp[], int q, char cq[], double fra
  #ifdef INDIVIDUAL_ELEMENTS
        for(ee=0;ee<NUM_ELEMENTS;ee++) {
      	  Gal[q].EjectedMass_elements[ee] -= Yield[ee];
+       }
 #ifdef DETAILED_DUST
 #ifdef DUST_EJECTEDMASS
-          Gal[q].DustEjectedMass_elements[ee] -= (Dust_diffuse[ee] + Dust_clouds[ee]);  //For the hypothetical scenario where ColdGas accreted dust directly from the EjectedMass component.
+       for(ss=0; ss<NUM_DUST_SPECIES; ss++) {
+         for(bb=0; bb<NUM_SIZE_BINS; bb++) {
+           Gal[p].DustMassEjected[ss][bb] += TransDustMass_diffuse[ss][bb] + TransDustMass_clouds[ss][bb];
+           Gal[p].DustNumEjected[ss][bb] += TransDustNum_diffuse[ss][bb] + TransDustNum_clouds[ss][bb];
+           Gal[p].DustAreaEjected[ss][bb] += TransDustArea_diffuse[ss][bb] + TransDustArea_clouds[ss][bb];
+         }
+       }
 #endif //DUST_EJECTEDMASS
 #endif //DETAILED_DUST
-       }
  #endif
    }
 
@@ -3586,7 +3741,7 @@ void partition_gas_and_dust_elements(int p) {
 #ifdef H2_AND_RINGS
     int jj;
     for(ee=0;ee<NUM_ELEMENTS;ee++) {
-		double tot_gasDiff=0., tot_gasClouds=0., tot_dustDiff=0., tot_dustClouds=0.;
+		double tot_gasDiff=0., tot_gasClouds=0.;
     	for(jj=0;jj<RNUM;jj++) {
 			if (Gal[p].ColdGasRings_elements[jj][ee] > 0.0) {
 				//Diffuse gas:
@@ -3616,11 +3771,84 @@ void partition_gas_and_dust_elements(int p) {
 				tot_dustDiff += Gal[p].DustColdGasDiffRings_elements[jj][ee];
 				tot_dustClouds += Gal[p].DustColdGasCloudsRings_elements[jj][ee];
 			}
+            else {
+                ColdGasDiffRings_elements_old[jj][ee] = 0.0;
+                ColdGasCloudsRings_elements_old[jj][ee] = 0.0;
+                ColdGasDiffRings_elements_change[jj][ee] = 0.0;
+                ColdGasCloudsRings_elements_change[jj][ee] = 0.0;
+                Gal[p].ColdGasDiffRings_elements[jj][ee] = 0.0;
+                Gal[p].ColdGasCloudsRings_elements[jj][ee] = 0.0;
+            }
 		}
     	Gal[p].ColdGasDiff_elements[ee] = tot_gasDiff;
     	Gal[p].ColdGasClouds_elements[ee] = tot_gasClouds;
     	Gal[p].DustColdGasDiff_elements[ee] = tot_dustDiff;
     	Gal[p].DustColdGasClouds_elements[ee] = tot_dustClouds;
+    }
+    for(int ss=0; ss<NUM_DUST_SPECIES; ss++) {
+        for(int bb=0; bb<NUM_SIZE_BINS; bb++) {
+            double tot_dustMassDiff = 0., tot_dustMassClouds = 0.;
+            double tot_dustNumDiff = 0.,  tot_dustNumClouds = 0.;
+            double tot_dustAreaDiff = 0., tot_dustAreaClouds = 0.;
+            for(jj=0;jj<RNUM;jj++) {
+                if (Gal[p].ColdGasRings[jj] > 0.0) {
+                    double diff_change = ColdGasDiffRings_elements_change[jj][H_NUM];
+                    double diff_old = ColdGasDiffRings_elements_old[jj][H_NUM];
+                    double cloud_old = ColdGasCloudsRings_elements_old[jj][H_NUM];
+                    
+                    if (diff_change > 0.0 && cloud_old > 0.0) {
+                        double frac_moved = diff_change / cloud_old;
+                        if (frac_moved > 1.0) frac_moved = 1.0;
+                        double mass_moved = Gal[p].DustMassColdGasCloudsRings[jj][ss][bb] * frac_moved;
+                        double num_moved  = Gal[p].DustNumColdGasCloudsRings[jj][ss][bb] * frac_moved;
+                        double area_moved = Gal[p].DustAreaColdGasCloudsRings[jj][ss][bb] * frac_moved;
+
+                        Gal[p].DustMassColdGasCloudsRings[jj][ss][bb] -= mass_moved;
+                        Gal[p].DustNumColdGasCloudsRings[jj][ss][bb]  -= num_moved;
+                        Gal[p].DustAreaColdGasCloudsRings[jj][ss][bb] -= area_moved;
+
+                        Gal[p].DustMassColdGasDiffRings[jj][ss][bb] += mass_moved;
+                        Gal[p].DustNumColdGasDiffRings[jj][ss][bb]  += num_moved;
+                        Gal[p].DustAreaColdGasDiffRings[jj][ss][bb] += area_moved;
+                    } else if (diff_change < 0.0 && diff_old > 0.0) {
+                        double frac_moved = -diff_change / diff_old;
+                        if (frac_moved > 1.0) frac_moved = 1.0;
+                        double mass_moved = Gal[p].DustMassColdGasDiffRings[jj][ss][bb] * frac_moved;
+                        double num_moved  = Gal[p].DustNumColdGasDiffRings[jj][ss][bb] * frac_moved;
+                        double area_moved = Gal[p].DustAreaColdGasDiffRings[jj][ss][bb] * frac_moved;
+
+                        Gal[p].DustMassColdGasDiffRings[jj][ss][bb] -= mass_moved;
+                        Gal[p].DustNumColdGasDiffRings[jj][ss][bb]  -= num_moved;
+                        Gal[p].DustAreaColdGasDiffRings[jj][ss][bb] -= area_moved;
+
+                        Gal[p].DustMassColdGasCloudsRings[jj][ss][bb] += mass_moved;
+                        Gal[p].DustNumColdGasCloudsRings[jj][ss][bb]  += num_moved;
+                        Gal[p].DustAreaColdGasCloudsRings[jj][ss][bb] += area_moved;
+                    }
+                    
+                    tot_dustMassDiff   += Gal[p].DustMassColdGasDiffRings[jj][ss][bb];
+                    tot_dustMassClouds += Gal[p].DustMassColdGasCloudsRings[jj][ss][bb];
+                    tot_dustNumDiff    += Gal[p].DustNumColdGasDiffRings[jj][ss][bb];
+                    tot_dustNumClouds  += Gal[p].DustNumColdGasCloudsRings[jj][ss][bb];
+                    tot_dustAreaDiff   += Gal[p].DustAreaColdGasDiffRings[jj][ss][bb];
+                    tot_dustAreaClouds += Gal[p].DustAreaColdGasCloudsRings[jj][ss][bb];
+                }
+                else {
+                    Gal[p].DustMassColdGasDiffRings[jj][ss][bb] = 0.0;
+                    Gal[p].DustNumColdGasDiffRings[jj][ss][bb]  = 0.0;
+                    Gal[p].DustAreaColdGasDiffRings[jj][ss][bb] = 0.0;
+                    Gal[p].DustMassColdGasCloudsRings[jj][ss][bb] = 0.0;
+                    Gal[p].DustNumColdGasCloudsRings[jj][ss][bb]  = 0.0;
+                    Gal[p].DustAreaColdGasCloudsRings[jj][ss][bb] = 0.0;
+                }
+            }
+            Gal[p].DustMassColdGasDiff[ss][bb]   = tot_dustMassDiff;
+            Gal[p].DustMassColdGasClouds[ss][bb] = tot_dustMassClouds;
+            Gal[p].DustNumColdGasDiff[ss][bb]    = tot_dustNumDiff;
+            Gal[p].DustNumColdGasClouds[ss][bb]  = tot_dustNumClouds;
+            Gal[p].DustAreaColdGasDiff[ss][bb]   = tot_dustAreaDiff;
+            Gal[p].DustAreaColdGasClouds[ss][bb] = tot_dustAreaClouds;
+        }
     }
 #else //H2_AND_RINGS
     //if (Gal[p].ColdGas_elements[0] > 0.0) { //ROB: Is this the best choice of condition here? (18-11-21)
@@ -3634,18 +3862,61 @@ void partition_gas_and_dust_elements(int p) {
 
 			ColdGasDiff_elements_change[ee] = Gal[p].ColdGasDiff_elements[ee] - ColdGasDiff_elements_old[ee]; //Calculate difference between new and old diffuse gas element masses
 			ColdGasClouds_elements_change[ee] = Gal[p].ColdGasClouds_elements[ee] - ColdGasClouds_elements_old[ee];
-
-			if (ColdGasDiff_elements_old[ee] > 0.0)
-				Gal[p].DustColdGasDiff_elements[ee] += Gal[p].DustColdGasDiff_elements[ee] * (ColdGasDiff_elements_change[ee] / ColdGasDiff_elements_old[ee]); //Update new diffuse DUST element masses
-			else
-				Gal[p].DustColdGasDiff_elements[ee] = 0.0;
-
-			if (ColdGasClouds_elements_old[ee] > 0.0)
-				Gal[p].DustColdGasClouds_elements[ee] += Gal[p].DustColdGasClouds_elements[ee] * (ColdGasClouds_elements_change[ee] / ColdGasClouds_elements_old[ee]);
-			else
-				Gal[p].DustColdGasClouds_elements[ee] = 0.0;
 		}
+        else {
+            ColdGasDiff_elements_old[ee] = 0.0;
+            ColdGasClouds_elements_old[ee] = 0.0;
+            ColdGasDiff_elements_change[ee] = 0.0;
+            ColdGasClouds_elements_change[ee] = 0.0;
+            Gal[p].ColdGasDiff_elements[ee] = 0.0;
+            Gal[p].ColdGasClouds_elements[ee] = 0.0;
+        }
 	}
+    if (Gal[p].ColdGas > 0.0) {
+        double diff_change = ColdGasDiff_elements_change[H_NUM];
+        double diff_old = ColdGasDiff_elements_old[H_NUM];
+        double cloud_old = ColdGasClouds_elements_old[H_NUM];
+        for(int ss=0; ss<NUM_DUST_SPECIES; ss++) {
+            for(int bb=0; bb<NUM_SIZE_BINS; bb++) {
+                if (diff_change > 0.0 && cloud_old > 0.0) {
+                    double frac_moved = diff_change / cloud_old;
+                    if (frac_moved > 1.0) frac_moved = 1.0;
+                    double mass_moved = Gal[p].DustMassColdGasClouds[ss][bb] * frac_moved;
+                    double num_moved  = Gal[p].DustNumColdGasClouds[ss][bb] * frac_moved;
+                    double area_moved = Gal[p].DustAreaColdGasClouds[ss][bb] * frac_moved;
+                    Gal[p].DustMassColdGasClouds[ss][bb] -= mass_moved;
+                    Gal[p].DustNumColdGasClouds[ss][bb]  -= num_moved;
+                    Gal[p].DustAreaColdGasClouds[ss][bb] -= area_moved;
+                    Gal[p].DustMassColdGasDiff[ss][bb] += mass_moved;
+                    Gal[p].DustNumColdGasDiff[ss][bb]  += num_moved;
+                    Gal[p].DustAreaColdGasDiff[ss][bb] += area_moved;
+                } else if (diff_change < 0.0 && diff_old > 0.0) {
+                    double frac_moved = -diff_change / diff_old;
+                    if (frac_moved > 1.0) frac_moved = 1.0;
+                    double mass_moved = Gal[p].DustMassColdGasDiff[ss][bb] * frac_moved;
+                    double num_moved  = Gal[p].DustNumColdGasDiff[ss][bb] * frac_moved;
+                    double area_moved = Gal[p].DustAreaColdGasDiff[ss][bb] * frac_moved;
+                    Gal[p].DustMassColdGasDiff[ss][bb] -= mass_moved;
+                    Gal[p].DustNumColdGasDiff[ss][bb]  -= num_moved;
+                    Gal[p].DustAreaColdGasDiff[ss][bb] -= area_moved;
+                    Gal[p].DustMassColdGasClouds[ss][bb] += mass_moved;
+                    Gal[p].DustNumColdGasClouds[ss][bb]  += num_moved;
+                    Gal[p].DustAreaColdGasClouds[ss][bb] += area_moved;
+                }
+            }
+        }
+    } else {
+        for(int ss=0; ss<NUM_DUST_SPECIES; ss++) {
+            for(int bb=0; bb<NUM_SIZE_BINS; bb++) {
+                Gal[p].DustMassColdGasDiff[ss][bb] = 0.0;
+                Gal[p].DustNumColdGasDiff[ss][bb]  = 0.0;
+                Gal[p].DustAreaColdGasDiff[ss][bb] = 0.0;
+                Gal[p].DustMassColdGasClouds[ss][bb] = 0.0;
+                Gal[p].DustNumColdGasClouds[ss][bb]  = 0.0;
+                Gal[p].DustAreaColdGasClouds[ss][bb] = 0.0;
+            }
+        }
+    }
 #endif //H2_AND_RINGS
 	return;
 }
@@ -3782,7 +4053,7 @@ void mass_checks(int igal, char call_function[], int call_line) {
       printf("             Gal[%d].BulgeMass = %g\n",igal,Gal[igal].BulgeMass);
       printf("           Gal[%d].EjectedMass = %g\n",igal,Gal[igal].EjectedMass);
 #ifdef EXCESS_MASS
-      printf("            Gal[%d].ExcessMass = %g\n",igal,Gal[igal].EjectedMass);
+      printf("            Gal[%d].ExcessMass = %g\n",igal,Gal[igal].ExcessMass);
 #endif
       printf("                  Snapnum = %i\n",Gal[igal].SnapNum);
       terminate("");
@@ -5311,5 +5582,3 @@ int string_length(char *s)
 
   return c;
 }
-
-
