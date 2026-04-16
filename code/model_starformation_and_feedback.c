@@ -502,8 +502,12 @@ void update_from_star_formation(int p, double stars, double starsRings[], char t
 #ifdef DETAILED_DUST
   transfer_material_with_rings(p,"DiskMass",p,"ColdGas",fractionRings,fractionCloudsRings,fractionDiffRings,"model_starformation_and_feedback.c", __LINE__);
   //ROB: I seem to have included astration with SN shock destruction here... (19-08-23):
-  for(ee=0;ee<NUM_ELEMENTS;ee++)
-	  Gal[p].DustColdGasRates[4] += (Gal[p].DustColdGasDiff_elements[ee]*fractionDiff + Gal[p].DustColdGasClouds_elements[ee]*fractionClouds)/(deltaT * UnitTime_in_years);
+  for(ee=0;ee<RNUM;ee++){
+    for(jj=0;jj<NUM_DUST_SPECIES;jj++){
+      for(int kk=0;kk<NUM_SIZE_BINS;kk++){
+        Gal[p].DustColdGasRates[4] += (Gal[p].DustMassColdGasDiffRings[ee][jj][kk]*fractionDiffRings[jj] + Gal[p].DustMassColdGasCloudsRings[ee][jj][kk]*fractionCloudsRings[jj])/(deltaT * UnitTime_in_years);
+    }    
+  }
 #else //DETAILED_DUST
   transfer_material_with_rings(p,"DiskMass",p,"ColdGas",fractionRings,"model_starformation_and_feedback.c", __LINE__);
 #endif //DETAILED_DUST
@@ -513,8 +517,11 @@ void update_from_star_formation(int p, double stars, double starsRings[], char t
   transfer_material(p,"DiskMass",p,"ColdGas",fraction, fractionClouds, fractionDiff,"model_starformation_and_feedback.c", __LINE__);
   //Update dust destruction rate:
   //Gal[p].DustColdGasRates[4] += (elements_total(elements_add(elements_init(),Gal[p].DustColdGasDiff_elements,fraction_diffuse)) + elements_total(elements_add(elements_init(),Gal[p].DustColdGasClouds_elements,fraction_clouds)))/(deltaT * UnitTime_in_years);
-  for(ee=0;ee<NUM_ELEMENTS;ee++)
-	  Gal[p].DustColdGasRates[4] += (Gal[p].DustColdGasDiff_elements[ee]*fractionDiff + Gal[p].DustColdGasClouds_elements[ee]*fractionClouds)/(deltaT * UnitTime_in_years);
+  for(ee=0;ee<NUM_DUST_SPECIES;ee++){
+    for(int jj=0;jj<NUM_SIZE_BINS;jj++){
+      Gal[p].DustColdGasRates[4] += (Gal[p].DustMassColdGasDiff[ee][jj]*fractionDiff + Gal[p].DustMassColdGasClouds[ee][jj]*fractionClouds)/(deltaT * UnitTime_in_years);
+    }
+  }
 #else
   transfer_material(p,"DiskMass",p,"ColdGas",fraction, "model_starformation_and_feedback.c", __LINE__);
 #endif
