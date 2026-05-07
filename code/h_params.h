@@ -135,6 +135,18 @@
 #define DUST_IRON      2
 #define DUST_SIC       3
 
+// Lognormal grain size distribution parameters:
+#define DUST_SIGMA 0.5
+#define VSG_MU -5.8091 // natural log of 0.003 microns
+#define SG_MU  -3.5066 // natural log of 0.03 microns
+#define LG_MU  -1.2040 // natural log of 0.3 microns
+
+// Species densities in g/cm^3:
+#define RHO_SILICATES 3.3
+#define RHO_CARBON    2.25
+#define RHO_IRON      7.87
+#define RHO_SIC       3.21
+
 //Defining the mass fractions of each dust type that is made up of each element (for use in model_dust_yields.c):
 //Note: ROB: Given that the atomic weights above are only to 3 d.c.s, shouldn't we truncate these dust-type fractions to 3 d.c.s too?
 //Forsterite (Mg2SiO4):
@@ -164,10 +176,10 @@
 //Olivine ([Mg,Fe]2SiO4):
 //#define OLIVINE_Mg_FRAC
 //Silicates:
-#define SILICATES_O_FRAC 0.439462 //0.419567
-#define SILICATES_Mg_FRAC 0.205116 //0.091053
-#define SILICATES_Si_FRAC 0.237635 //0.210432
-#define SILICATES_Fe_FRAC 0.117787 //0.278948
+#define SILICATES_O_FRAC  0.3786
+#define SILICATES_Mg_FRAC 0.1581
+#define SILICATES_Si_FRAC 0.1662
+#define SILICATES_Fe_FRAC 0.2971
 
 #define OLIVINE_Mg_NUMFRAC 0.8 //The average fraction of Mg+Fe assumed to be Mg in Olivine (i.e. parameter x in Zhukovska+08)
 #define PYROXENE_Mg_NUMFRAC 0.8 //The average fraction of Mg+Fe assumed to be Mg in Pyroxene (i.e. parameter x in Zhukovska+08)

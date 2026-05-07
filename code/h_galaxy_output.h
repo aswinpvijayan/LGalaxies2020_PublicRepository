@@ -391,9 +391,11 @@ struct GALAXY_OUTPUT {
   // Dust Number Arrays (M0)
   float DustNumColdGasDiff[NUM_DUST_SPECIES][NUM_SIZE_BINS];
   float DustNumColdGasClouds[NUM_DUST_SPECIES][NUM_SIZE_BINS];
-  // Dust Area Arrays (M2)
   float DustAreaColdGasDiff[NUM_DUST_SPECIES][NUM_SIZE_BINS];
   float DustAreaColdGasClouds[NUM_DUST_SPECIES][NUM_SIZE_BINS];
+  // Dust Shape Arrays (M2/M3^(2/3))
+  float DustShapeColdGasDiff[NUM_DUST_SPECIES][NUM_SIZE_BINS];
+  float DustShapeColdGasClouds[NUM_DUST_SPECIES][NUM_SIZE_BINS];
 #ifdef DUST_HOTGAS
 //   float DustHotGas_elements[NUM_ELEMENTS]; // Msun // Mass of elements locked up in dust (in HotGas)
   float DustMassHotGas[NUM_DUST_SPECIES][NUM_SIZE_BINS];
@@ -401,6 +403,7 @@ struct GALAXY_OUTPUT {
   float DustNumHotGas[NUM_DUST_SPECIES][NUM_SIZE_BINS];
   // Dust Area Arrays (M2)
   float DustAreaHotGas[NUM_DUST_SPECIES][NUM_SIZE_BINS];
+  float DustShapeHotGas[NUM_DUST_SPECIES][NUM_SIZE_BINS];
 #endif //DUST_HOTGAS
 #ifdef DUST_EJECTEDMASS
 //   float DustEjectedMass_elements[NUM_ELEMENTS]; // Msun // Mass of elements locked up in dust (in EjectedMass)
@@ -409,6 +412,7 @@ struct GALAXY_OUTPUT {
   float DustNumEjectedMass[NUM_DUST_SPECIES][NUM_SIZE_BINS];
   // Dust Area Arrays (M2)
   float DustAreaEjectedMass[NUM_DUST_SPECIES][NUM_SIZE_BINS];
+  float DustShapeEjectedMass[NUM_DUST_SPECIES][NUM_SIZE_BINS];
 #endif //DUST_EJECTEDMASS
 #ifdef OUTPUT_DUST_RINGS
     float ColdGasDiffRings_elements[RNUM][NUM_ELEMENTS]; // Msun // Mass of elements in diffuse gas in each annular ring
@@ -423,6 +427,9 @@ struct GALAXY_OUTPUT {
     // Dust Area Arrays (M2)
     float DustAreaColdGasDiffRings[RNUM][NUM_DUST_SPECIES][NUM_SIZE_BINS];
     float DustAreaColdGasCloudsRings[RNUM][NUM_DUST_SPECIES][NUM_SIZE_BINS];
+    // Dust Shape Arrays (M2/M3^(2/3))
+    float DustShapeColdGasDiffRings[RNUM][NUM_DUST_SPECIES][NUM_SIZE_BINS];
+    float DustShapeColdGasCloudsRings[RNUM][NUM_DUST_SPECIES][NUM_SIZE_BINS];
 #endif
 #endif //DETAILED_DUST
 };

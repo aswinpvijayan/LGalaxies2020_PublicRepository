@@ -299,9 +299,9 @@ struct GALAXY			/* Galaxy data */
   float f_c[RNUM][NUM_DUST_SPECIES]; // ? // fraction of dust in molecular media
   float f_cmax[RNUM][NUM_DUST_SPECIES]; // ? // max fraction of molecular media
 #else
-  float f_i[[NUM_DUST_SPECIES]]; // ? // fraction of dust in diffused media
-  float f_c[[NUM_DUST_SPECIES]]; // ? // fraction of dust in molecular media
-  float f_cmax[[NUM_DUST_SPECIES]]; // ? // max fraction of molecular media
+  float f_i[NUM_DUST_SPECIES]; // ? // fraction of dust in diffused media
+  float f_c[NUM_DUST_SPECIES]; // ? // fraction of dust in molecular media
+  float f_cmax[NUM_DUST_SPECIES]; // ? // max fraction of molecular media
 #endif //H2_AND_RINGS
   double ColdGasDiff_elements[NUM_ELEMENTS];
   double ColdGasClouds_elements[NUM_ELEMENTS];
@@ -317,17 +317,23 @@ struct GALAXY			/* Galaxy data */
   // Dust Area Arrays (M2)
   double DustAreaColdGasDiff[NUM_DUST_SPECIES][NUM_SIZE_BINS];
   double DustAreaColdGasClouds[NUM_DUST_SPECIES][NUM_SIZE_BINS];
+
+  // Dust Shape Arrays (M2/M3^(2/3))
+  double DustShapeColdGasDiff[NUM_DUST_SPECIES][NUM_SIZE_BINS];
+  double DustShapeColdGasClouds[NUM_DUST_SPECIES][NUM_SIZE_BINS];
 #ifdef DUST_HOTGAS
   // Msun // Mass of dust species locked up in HotGas
   double DustMassHotGas[NUM_DUST_SPECIES][NUM_SIZE_BINS];
   double DustNumHotGas[NUM_DUST_SPECIES][NUM_SIZE_BINS];
   double DustAreaHotGas[NUM_DUST_SPECIES][NUM_SIZE_BINS]; 
+  double DustShapeHotGas[NUM_DUST_SPECIES][NUM_SIZE_BINS];
 #endif //DUST_HOTGAS
 #ifdef DUST_EJECTEDMASS
   // Msun // Mass of dust species in EjectedMass
   double DustMassEjected[NUM_DUST_SPECIES][NUM_SIZE_BINS]; 
   double DustNumEjected[NUM_DUST_SPECIES][NUM_SIZE_BINS];
   double DustAreaEjected[NUM_DUST_SPECIES][NUM_SIZE_BINS];
+  double DustShapeEjected[NUM_DUST_SPECIES][NUM_SIZE_BINS];
 #endif //DUST_EJECTEDMASS
 #ifdef H2_AND_RINGS
   double ColdGasDiffRings_elements[RNUM][NUM_ELEMENTS];
@@ -344,6 +350,10 @@ struct GALAXY			/* Galaxy data */
   // Area Arrays with Rings
   double DustAreaColdGasDiffRings[RNUM][NUM_DUST_SPECIES][NUM_SIZE_BINS];
   double DustAreaColdGasCloudsRings[RNUM][NUM_DUST_SPECIES][NUM_SIZE_BINS];
+
+  // Shape Arrays with Rings
+  double DustShapeColdGasDiffRings[RNUM][NUM_DUST_SPECIES][NUM_SIZE_BINS];
+  double DustShapeColdGasCloudsRings[RNUM][NUM_DUST_SPECIES][NUM_SIZE_BINS];
 #endif //H2_AND_RINGS
 #endif //DETAILED_DUST
 } *Gal, *HaloGal;
